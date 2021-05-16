@@ -2,9 +2,11 @@
   <v-app>
     <Header />
     <v-main>
-      <Breadcrumbs />
+      <Breadcrumbs v-if="$route.path == '/'" />
       <Nav />
-      <router-view />
+      <v-container>
+        <router-view />
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -16,14 +18,11 @@
 
   export default {
     name: "App",
-
     components: {
       Header,
       Breadcrumbs,
       Nav,
     },
-
-    data: () => ({}),
   };
 </script>
 

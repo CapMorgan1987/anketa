@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-breadcrumbs :items="items"></v-breadcrumbs>
+    <v-breadcrumbs :items="itemsData()"></v-breadcrumbs>
   </div>
 </template>
 
@@ -10,11 +10,23 @@
 
     data() {
       return {
-        items: [{ text: "Ankete" }],
+        title: "Nova anketa",
+
+        items: [
+          { text: "Ankete", disabled: false },
+          { text: "test", disabled: false },
+        ],
       };
+    },
+    methods: {
+      itemsData() {
+        this.items[1].text = this.title;
+        return this.items;
+      },
     },
   };
 </script>
 
 <style>
 </style>
+

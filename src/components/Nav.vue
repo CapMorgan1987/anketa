@@ -1,26 +1,19 @@
 <template>
-  <v-bottom-navigation color="orange">
+  <v-bottom-navigation color="orange" class="ma-10">
     <v-btn to="/">
       <span>Uređivanje</span>
 
       <v-icon>mdi-pencil</v-icon>
     </v-btn>
-    <v-btn>
-      <span>Favorites</span>
-
-      <v-icon>mdi-eye</v-icon>
-    </v-btn>
-
-    <v-btn>
-      <span>Slanje</span>
-
-      <v-icon>mdi-file-send</v-icon>
-    </v-btn>
-
     <v-btn to="/stats">
       <span>Rezultati</span>
 
       <v-icon>mdi-chart-bar</v-icon>
+    </v-btn>
+    <v-btn to="/test">
+      <span>Test</span>
+
+      <v-icon>mdi-ab-testing</v-icon>
     </v-btn>
   </v-bottom-navigation>
 </template>
