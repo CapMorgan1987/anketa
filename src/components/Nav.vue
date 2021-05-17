@@ -10,11 +10,6 @@
 
       <v-icon>mdi-chart-bar</v-icon>
     </v-btn>
-    <v-btn to="/test">
-      <span>Test</span>
-
-      <v-icon>mdi-ab-testing</v-icon>
-    </v-btn>
   </v-bottom-navigation>
 </template>
 
