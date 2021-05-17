@@ -62,6 +62,7 @@
         this.editable = true;
       },
       changeTitle() {
+        this.$store.state.title = this.newTitle;
         this.title = this.newTitle;
         this.editable = false;
         console.log(this.newTitle);

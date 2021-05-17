@@ -1,6 +1,10 @@
 <template>
   <div>
-    <v-breadcrumbs :items="itemsData()"></v-breadcrumbs>
+    <v-breadcrumbs :items="breadcrumbs">
+      <template v-slot:item="{ item }">
+        <v-breadcrumbs-item>{{ item.text }}</v-breadcrumbs-item>
+      </template>
+    </v-breadcrumbs>
   </div>
 </template>
 
@@ -10,18 +14,21 @@
 
     data() {
       return {
-        title: "Nova anketa",
-
-        items: [
+        breadcrumbs: [
           { text: "Ankete", disabled: false },
-          { text: "test", disabled: false },
+          { text: this.$store.state.title, disabled: false },
         ],
       };
     },
-    methods: {
-      itemsData() {
-        this.items[1].text = this.title;
-        return this.items;
+    computed: {
+      title() {
+        return this.$store.state.title;
+      },
+    },
+    watch: {
+      title(value) {
+        this.breadcrumbs[1].text = value;
+        console.log(`title changes to ${value}`);
       },
     },
   };

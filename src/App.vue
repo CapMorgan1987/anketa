@@ -30,4 +30,9 @@
   a {
     text-decoration: none;
   }
+  .other .v-input__slot {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+  }
 </style>

@@ -52,13 +52,33 @@
           </v-hover>
           <v-hover v-slot="{ hover }" v-for="q in question.answer" :key="q.id">
             <div class="d-flex text-input">
-              <v-checkbox v-if="!q.editableAnswer">
+              <v-checkbox v-if="!q.editableAnswer && !q.lastQuestion">
                 <template v-slot:label>
                   <div>
                     {{ q.text }}
                   </div>
                 </template>
               </v-checkbox>
+              <v-checkbox
+                v-else-if="!q.editableAnswer && q.lastQuestion"
+                class="other"
+              >
+                <template v-slot:label>
+                  <div>
+                    <div class="mb-3">Drugi razlozi</div>
+                    <p>
+                      {{ q.text }}
+                    </p>
+                  </div>
+                </template>
+              </v-checkbox>
+              <v-textarea
+                v-else-if="q.lastQuestion"
+                v-model="editedAnswer"
+                :rules="answerRules"
+                solo
+                label="Molimo upišite komentar"
+              ></v-textarea>
               <v-text-field
                 v-else
                 v-model="editedAnswer"
@@ -108,11 +128,19 @@
           <v-hover v-slot="{ hover }" v-if="question.isAddingAnswer">
             <div class="d-flex text-input">
               <v-text-field
+                v-if="!textareaOpen"
                 v-model="newA"
                 label="Novi odgovor"
                 :rules="answerRules"
                 solo
               ></v-text-field>
+              <v-textarea
+                v-if="textareaOpen"
+                v-model="newA"
+                :rules="answerRules"
+                solo
+                label="Molimo upišite komentar"
+              ></v-textarea>
               <v-fab-transition>
                 <v-btn
                   @click="addAnswer(question.id)"
@@ -128,8 +156,27 @@
               </v-fab-transition>
             </div>
           </v-hover>
-          <v-btn @click="openNewAnswer(question.id)" color="orange" dark>
-            Dodaj odgovor
+          <v-btn
+            @click="openNewAnswer(question.id)"
+            color="orange"
+            text
+            v-if="!question.hasLastQuestion"
+            class="mr-5 pa-5"
+          >
+            <v-icon left large color="orange" class="pr-2">
+              mdi-plus-circle </v-icon
+            >Dodaj odgovor
+          </v-btn>
+          <v-btn
+            @click.once="openTextarea(question.id)"
+            color="orange"
+            text
+            class="mr-5 pa-5"
+          >
+            <v-icon left large color="orange" class="pr-2">
+              mdi-plus-circle
+            </v-icon>
+            Dodaj opciju drugo
           </v-btn>
         </v-form>
       </v-col>
@@ -157,18 +204,37 @@
         editedAnswer: "",
         answerRules: [(v) => !!v || "Upišite novo pitanje"],
         newA: "",
+        textareaOpen: false,
+        lastQuestion: false,
+        addedLastQuestion: false,
         questions: [
           {
             id: 1,
             title: "Naslov pitanja 1",
-            answer: [
-              { id: 1, text: "Odgovor 1", editableAnswer: false },
-              // { id: 2, text: "Odgovor 2", editableAnswer: false },
-              // { id: 3, text: "Odgovor 3", editableAnswer: false },
-            ],
             editable: false,
             editableAnswer: false,
             isAddingAnswer: false,
+            hasLastQuestion: false,
+            answer: [
+              {
+                id: 1,
+                text: "Odgovor 1",
+                editableAnswer: false,
+                lastQuestion: false,
+              },
+              // {
+              //   id: 2,
+              //   text: "Odgovor 2",
+              //   editableAnswer: false,
+              //   lastQuestion: true,
+              // },
+              // {
+              //   id: 3,
+              //   text: "Odgovor 3",
+              //   editableAnswer: false,
+              //   lastQuestion: true,
+              // },
+            ],
           },
           // {
           //   id: 2,
@@ -212,17 +278,29 @@
           (obj) => obj.id == aid
         );
         this.questions[objIndex].answer[answerIndex].editableAnswer = true;
+        if (this.lastQuestion === true) {
+          this.textareaOpen = true;
+        }
         console.log(qid);
+        console.log(this.lastQuestion);
       },
       addEditedAnswer(qid, aid) {
         let objIndex = this.questions.findIndex((obj) => obj.id == qid);
         let answerIndex = this.questions[objIndex].answer.findIndex(
           (obj) => obj.id == aid
         );
-        this.questions[objIndex].answer[answerIndex].text = this.editedAnswer;
-        this.editedAnswer = "";
-        this.questions[objIndex].answer[answerIndex].editableAnswer = false;
-        console.log(this.editedAnswer);
+        if (this.questions[objIndex].answer[answerIndex].lastQuestion) {
+          this.questions[objIndex].answer[answerIndex].text = this.editedAnswer;
+          this.editedAnswer = "";
+          this.questions[objIndex].answer[answerIndex].editableAnswer = false;
+          this.questions[objIndex].answer[answerIndex].lastQuestion = true;
+        } else {
+          this.questions[objIndex].answer[answerIndex].text = this.editedAnswer;
+          this.editedAnswer = "";
+          this.questions[objIndex].answer[answerIndex].editableAnswer = false;
+          this.questions[objIndex].answer[answerIndex].lastQuestion = false;
+        }
+        console.log(this.questions[objIndex].answer[answerIndex].lastQuestion);
       },
       remove(qid, aid) {
         let objIndex = this.questions.findIndex((obj) => obj.id == qid);
@@ -236,27 +314,31 @@
         let objIndex = this.questions.findIndex((obj) => obj.id == qid);
         this.questions[objIndex].isAddingAnswer = true;
       },
+      openTextarea(qid) {
+        let objIndex = this.questions.findIndex((obj) => obj.id == qid);
+        this.questions[objIndex].isAddingAnswer = true;
+        this.questions[objIndex].hasLastQuestion = true;
+        this.textareaOpen = true;
+        this.lastQuestion = true;
+        console.log(this.lastQuestion);
+      },
       addAnswer(qid) {
         let objIndex = this.questions.findIndex((obj) => obj.id == qid);
         let last = this.questions[objIndex].answer[
           this.questions[objIndex].answer.length - 1
         ];
-        // let newId = "";
-        // if (last.id === "undefined") {
-        //   console.log("no answers");
-        //   newId = 1;
-        // } else {
-        //   newId = last.id + 1;
-        // }
         let newId = last.id + 1;
         let newAnswer = {
           id: newId,
           text: this.newA,
           editableAnswer: false,
+          lastQuestion: this.lastQuestion,
         };
         this.questions[objIndex].answer.push(newAnswer);
         this.newA = "";
         this.questions[objIndex].isAddingAnswer = false;
+        this.lastQuestion = false;
+        this.textareaOpen = false;
         // console.log(this.questions[objIndex].answer.length);
         console.log(last);
         console.log(qid);
@@ -271,20 +353,21 @@
         let newQuestion = {
           id: newQuestionId,
           title: "Novo pitanje",
+          editable: true,
+          isAddingAnswer: false,
+          hasLastQuestion: false,
           answer: [
             {
               id: 1,
               text: "Dodaj odgovor",
               editableAnswer: false,
+              lastQuestion: false,
             },
           ],
-          editable: true,
-          isAddingAnswer: false,
         };
         this.questions.push(newQuestion);
         console.log(newQuestion);
       },
-      deleteQuestion() {},
     },
     components: {
       PollName,
@@ -324,5 +407,10 @@
     z-index: 999;
     position: absolute;
     right: -50px;
+  }
+  .other .v-input__slot {
+    display: flex !important;
+    flex-direction: row !important;
+    background-color: aqua !important;
   }
 </style>
