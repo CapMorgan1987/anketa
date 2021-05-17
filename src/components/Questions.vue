@@ -5,18 +5,18 @@
     <v-row class="d-flex">
       <v-col
         cols="12"
-        md="8"
-        offset-md="2"
+        md="6"
+        offset-md="3"
         v-for="question in questions"
         :key="question.id"
         class="my-3 pa-5 question"
       >
         <v-form v-model="valid">
           <v-hover v-slot="{ hover }">
-            <div class="d-flex text-input">
-              <p v-if="!question.editable">
+            <div class="d-flex mb-4 text-input">
+              <h3 v-if="!question.editable">
                 {{ question.id }}. {{ question.title }}
-              </p>
+              </h3>
               <v-text-field
                 v-else
                 solo
