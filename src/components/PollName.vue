@@ -1,12 +1,12 @@
 <template>
   <v-row class="d-flex">
-    <v-col cols="12" md="6" offset-md="3" class="my-3 pa-5 question">
+    <v-col cols="12" md="4" offset-md="4" class="my-3 pa-5 question">
       <v-form v-model="valid">
         <v-hover v-slot="{ hover }">
           <div class="d-flex text-input">
-            <p v-if="!editable">
+            <h2 class="orange--text" v-if="!editable">
               {{ title }}
-            </p>
+            </h2>
             <v-text-field
               v-else
               solo
