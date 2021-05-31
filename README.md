@@ -1,5 +1,5 @@
 # anketa
-
+vue, vuetify app, samo front, bio test za zamolbu za posao.
 ## Project setup
 ```
 npm install
